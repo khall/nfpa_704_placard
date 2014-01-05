@@ -1,0 +1,152 @@
+<html>
+<head>
+    <script src="vendor/jquery.js"></script>
+    <script>
+        var flammability = ["Materials that will not burn under typical fire conditions (e.g., carbon dioxide), including intrinsically noncombustible materials such as concrete, stone and sand. (Materials that will not burn in air when exposed to a temperature of 816°C (1500°F) for a period of 5 minutes.)",
+            "Materials that require considerable preheating, under all ambient temperature conditions, before ignition and combustion can occur (e.g., mineral oil). Includes some finely divided suspended solids that do not require heating before ignition can occur. (Flash point at or above 93.4°C [200°F])",
+            "Must be moderately heated or exposed to relatively high ambient temperature before ignition can occur (e.g., diesel fuel) and some finely divided suspended solids that do not require heating before ignition can occur. Flash point between 38°C (100°F) and 93°C (200°F)",
+            "Liquids and solids (including finely divided suspended solids) that can be ignited under almost all ambient temperature conditions (e.g., gasoline). Liquids having a flash point below 23°C (73°F) and having a boiling point at or above 38°C (100°F) or having a flash point between 23°C (73°F) and 38°C (100°F)",
+            "Will rapidly or completely vaporize at normal atmospheric pressure and temperature, or is readily dispersed in air and will burn readily (e.g., acetylene, diethylzinc). Includes pyrophoric substances. Flash point below 23°C (73°F)"
+        ];
+
+        var health = ["Poses no health hazard, no precautions necessary and would offer no hazard beyond that of ordinary combustible materials (e.g., wood)",
+            "Exposure would cause irritation with only minor residual injury (e.g., acetone)",
+            "Intense or continued but not chronic exposure could cause temporary incapacitation or possible residual injury (e.g., diethyl ether)",
+            "Short exposure could cause serious temporary or moderate residual injury (e.g., chlorine)",
+            "Very short exposure could cause death or major residual injury (e.g., hydrogen cyanide, phosphine, carbon monoxide, sarin)"
+        ];
+
+        var reactivity = ["Normally stable, even under fire exposure conditions, and is not reactive with water (e.g. helium)",
+            "Normally stable, but can become unstable at elevated temperatures and pressures (e.g. propene)",
+            "Undergoes violent chemical change at elevated temperatures and pressures, reacts violently with water, or may form explosive mixtures with water (e.g., white phosphorus, potassium, sodium)",
+            "Capable of detonation or explosive decomposition but requires a strong initiating source, must be heated under confinement before initiation, reacts explosively with water, or will detonate if severely shocked (e.g. ammonium nitrate, chlorine trifluoride)",
+            "Readily capable of detonation or explosive decomposition at normal temperatures and pressures (e.g., nitroglycerin, chlorine azide, chlorine dioxide)"
+        ];
+
+        var specialIndex = 0;
+        var special = [
+            "",
+            "No special attributes",
+            "OX",
+            "Oxidizer (e.g., potassium perchlorate, ammonium nitrate, hydrogen peroxide). Allows chemicals to burn without an air supply.",
+            "W",
+            "Reacts with water in an unusual or dangerous manner (e.g., cesium, sodium, sulfuric acid)",
+            "SA",
+            "Simple asphyxiant gas. Specifically limited to the following gases: nitrogen, helium, neon, argon, krypton and xenon."
+        ];
+    </script>
+    <style>
+        .arrow {
+            cursor: pointer;
+        }
+
+        section {
+            width: 800px;
+        }
+
+        section div {
+            margin: 20px 0;
+        }
+
+        .strike {
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+<body>
+    <svg width="500" height="500">
+        <polygon fill="red" stroke="black" stroke-width="3" points="250,1, 375,125, 250,250, 125,125"/>
+        <polygon fill="blue" stroke="black" stroke-width="3" points="125,125, 1,250, 125,375, 250,250"/>
+        <polygon fill="yellow" stroke="black" stroke-width="3" points="375,125, 499,250, 375,375, 250,250"/>
+        <polyline fill="none" stroke="black" stroke-width="3" points="125,375, 250,499, 375,375"/>
+        <text id="flammability" x="203" y="185" style="font-family:sans-serif; font-size:172px">0</text>
+        <text id="health" x="80" y="310" style="font-family:sans-serif; font-size:172px">0</text>
+        <text id="reactivity" x="328" y="310" style="font-family:sans-serif; font-size:172px">0</text>
+        <text id="special" x="185" y="410" style="font-family:sans-serif; font-size:96px"></text>
+        <polygon id="flammability_up" fill="black" stroke="black" points="250,21, 270,41, 230,41" class="arrow"/>
+        <polygon id="flammability_down" fill="black" stroke="black" points="250,230, 270,210, 230,210" class="arrow"/>
+        <polygon id="health_up" fill="black" stroke="black" points="125,145, 105,165, 145,165" class="arrow"/>
+        <polygon id="health_down" fill="black" stroke="black" points="125,355, 105,335, 145,335" class="arrow"/>
+        <polygon id="reactivity_up" fill="black" stroke="black" points="375,145, 395,165, 355,165" class="arrow"/>
+        <polygon id="reactivity_down" fill="black" stroke="black" points="375,355, 395,335, 355,335" class="arrow"/>
+        <polygon id="special_up" fill="black" stroke="black" points="250,270, 270,290, 230,290" class="arrow"/>
+        <polygon id="special_down" fill="black" stroke="black" points="250,479, 270,459, 230,459" class="arrow"/>
+    </svg>
+    <section>
+        <div>Health: <span id="health_text"></span></div>
+        <div>Flammability: <span id="flammability_text"></span></div>
+        <div>Reactivity: <span id="reactivity_text"></span></div>
+        <div>Special: <span id="special_text"></span></div>
+    </section>
+    <script>
+        $("#flammability_up").bind('click', function() {
+            var val = parseInt($("#flammability").html());
+            if (val < 4) { val += 1; }
+            $("#flammability_text").html(flammability[val]);
+            $("#flammability").html(val);
+        });
+        $("#flammability_down").bind('click', function() {
+            var val = parseInt($("#flammability").html());
+            if (val > 0) { val -= 1; }
+            $("#flammability_text").html(flammability[val]);
+            $("#flammability").html(val);
+        });
+
+        $("#health_up").bind('click', function() {
+            var val = parseInt($("#health").html());
+            if (val < 4) { val += 1; }
+            $("#health_text").html(health[val]);
+            $("#health").html(val);
+        });
+        $("#health_down").bind('click', function() {
+            var val = parseInt($("#health").html());
+            if (val > 0) { val -= 1; }
+            $("#health_text").html(health[val]);
+            $("#health").html(val);
+        });
+
+        $("#reactivity_up").bind('click', function() {
+            var val = parseInt($("#reactivity").html());
+            if (val < 4) { val += 1; }
+            $("#reactivity_text").html(reactivity[val]);
+            $("#reactivity").html(val);
+        });
+        $("#reactivity_down").bind('click', function() {
+            var val = parseInt($("#reactivity").html());
+            if (val > 0) { val -= 1; }
+            $("#reactivity_text").html(reactivity[val]);
+            $("#reactivity").html(val);
+        });
+
+        $("#special_up").bind('click', function() {
+            if (specialIndex < 5) { specialIndex += 2; }
+            if (specialIndex == 4) {
+                $("#special").attr("style", "text-decoration:line-through; font-family:sans-serif; font-size:96px");
+                $("#special").attr("x", "205");
+            } else {
+                $("#special").attr("style", "font-family:sans-serif; font-size:96px");
+                $("#special").attr("x", "185");
+            }
+            $("#special_text").html(special[specialIndex+1]);
+            $("#special").html(special[specialIndex]);
+        });
+        $("#special_down").bind('click', function() {
+            if (specialIndex > 0) { specialIndex -= 2; }
+            if (specialIndex == 4) {
+                $("#special").attr("style", "text-decoration:line-through; font-family:sans-serif; font-size:96px");
+                $("#special").attr("x", "205");
+            } else {
+                $("#special").attr("style", "font-family:sans-serif; font-size:96px");
+                $("#special").attr("x", "185");
+            }
+            $("#special_text").html(special[specialIndex+1]);
+            $("#special").html(special[specialIndex]);
+        });
+
+        $("#health_down").click();
+        $("#flammability_down").click();
+        $("#reactivity_down").click();
+        $("#special_down").click();
+    </script>
+</body>
+</html>
